@@ -1,0 +1,19 @@
+{
+  "name": "times-of-day ",
+  "title": "Times of day",
+  "version": "0.0.1",
+  "description": "Plugin for showing visilation of session and events",
+  "author": "Count.ly",
+  "homepage": "https://count.ly/plugins/",
+  "repository" :{ "type" : "git", "url" : "http://github.com/Countly/countly-server.git"},
+  "bugs":{ "url" : "http://github.com/Countly/countly-server/issues"},
+  "keywords": [
+    "countly",
+    "analytics",
+    "mobile",
+    "plugins"
+  ],
+  "dependencies": {
+  },
+  "private": true
+}
