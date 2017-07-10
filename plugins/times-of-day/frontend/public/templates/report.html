@@ -3,8 +3,23 @@
         <div class="left">
             <div class="title">{{page-title}}</div>
         </div>
+
     </div>
-</div>
-<div class="times-of-day-table">
-    <h4>Times of day plugin demo page</h4>
+    <div class="widget-content" style="height:450px;  padding-bottom:10px;width: 25%;float: left; ">
+        <div class="nav-search">
+            <i class="fa fa-search"></i>
+            <input type="text" />
+        </div>
+        <div class="scrollable" style="max-height:450px;">
+            {{#eachOfArray events}}
+            <div class="searchable tod-segment {{#if value.is_active}}active{{/if}}" data-key="{{value.key}}">
+                <div class="name">{{value.name}}</div>
+            </div>
+            {{/eachOfArray}}
+        </div>
+    </div>
+    <div class="widget-content" style="height:450px; padding-top:20px; padding-bottom:10px;width: 74%;float: left ">
+        <div id="tod-chart">
+        </div>
+    </div>
 </div>

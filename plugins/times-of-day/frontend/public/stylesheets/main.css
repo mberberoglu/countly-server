@@ -1,0 +1,12 @@
+.tod-segment {
+    position: relative;
+    cursor: pointer;
+    height: 28px;
+    padding: 4px 12px;
+    overflow: auto;
+    border-top: 1px solid #D0D0D0;
+}
+
+.tod-segment.active {
+    background-color: #dedede;
+}
