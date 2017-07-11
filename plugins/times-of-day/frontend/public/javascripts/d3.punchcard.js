@@ -1,58 +1,60 @@
 'use strict';
-if (typeof module !== 'undefined') module.exports = simpleheat;
+if (typeof module !== 'undefined') module.exports = PunchCard;
 
-var options = {
-	mTop: 10,
-	mRight: 10,
-	mBottom: 10,
-	mLeft: 15,
-	width: 950,
-	height: 300,
-	padding: 3,
-	xLabelHeight: 30,
-	yLabelWidth: 120,
-	borderWidth: 3,
-	duration: 500,
-};
+
 var labelsX = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 
 function PunchCard(element) {
 	if (!(this instanceof PunchCard)) return new PunchCard(element);
+	this.options = {
+		mTop: 10,
+		mRight: 10,
+		mBottom: 10,
+		mLeft: 15,
+		width: 950,
+		height: 300,
+		padding: 3,
+		xLabelHeight: 30,
+		yLabelWidth: 120,
+		borderWidth: 3,
+		duration: 500,
+	};
 
 	this.chart = d3.select(element).append('svg')
-		.attr('width', options.width + options.mLeft + options.mRight)
-		.attr('height', options.height + options.mTop + options.mBottom)
+		.attr('width', this.options.width + this.options.mLeft + this.options.mRight)
+		.attr('height', this.options.height + this.options.mTop + this.options.mBottom)
 		.append('g')
-		.attr('transform', 'translate(' + options.mLeft + ',' + options.mTop + ')');
+		.attr('transform', 'translate(' + this.options.mLeft + ',' + this.options.mTop + ')');
 
 	this.border = this.chart.append('rect')
-		.attr('x', options.yLabelWidth)
-		.attr('y', options.xLabelHeight)
+		.attr('x', this.options.yLabelWidth)
+		.attr('y', this.options.xLabelHeight)
 		.style('fill-opacity', 0)
 		.style('stroke', '#000')
-		.style('stroke-width', options.borderWidth)
+		.style('stroke-width', this.options.borderWidth)
 		.style('shape-rendering', 'crispEdges');
 }
 
 PunchCard.prototype = {
 	chart: null,
 	border: null,
+	options: {},
 	update: function (data) {
-
+		var o = this.options;
 		var allValues = Array.prototype.concat.apply([], data.map(function (d) {
 			return d.values;
 		}));
 		var maxWidth = d3.max(data.map(function (d) {
 			return d.values.length;
 		}));
-		var maxR = d3.min([(options.width - options.yLabelWidth) / maxWidth, (options.height - options.xLabelHeight) / data.length]) / 2;
+		var maxR = d3.min([(o.width - o.yLabelWidth) / maxWidth, (o.height - o.xLabelHeight) / data.length]) / 2;
 
 		var r = function (d) {
 			if (d === 0) return 0;
 
 			var f = d3.scale.sqrt()
 				.domain([d3.min(allValues), d3.max(allValues)])
-				.rangeRound([2, maxR - options.padding]);
+				.rangeRound([2, maxR - o.padding]);
 
 			return f(d);
 		};
@@ -71,14 +73,14 @@ PunchCard.prototype = {
 
 		rows.exit()
 			.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.style('fill-opacity', 0)
 			.remove();
 
 		rows.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('transform', function (d, i) {
-				return 'translate(' + options.yLabelWidth + ',' + (maxR * i * 2 + maxR + options.xLabelHeight) + ')';
+				return 'translate(' + o.yLabelWidth + ',' + (maxR * i * 2 + maxR + o.xLabelHeight) + ')';
 			});
 
 		var dots = rows.selectAll('circle')
@@ -96,12 +98,12 @@ PunchCard.prototype = {
 
 		dots.exit()
 			.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('r', 0)
 			.remove();
 
 		dots.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('r', function (d) {
 				return r(d);
 			})
@@ -161,7 +163,7 @@ PunchCard.prototype = {
 			.data(labelsX);
 
 		xLabels.enter().append('text')
-			.attr('y', options.xLabelHeight)
+			.attr('y', o.xLabelHeight)
 			.attr('transform', 'translate(0,-6)')
 			.attr('class', 'xLabel')
 			.style('text-anchor', 'middle')
@@ -169,7 +171,7 @@ PunchCard.prototype = {
 
 		xLabels.exit()
 			.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.style('fill-opacity', 0)
 			.remove();
 
@@ -177,9 +179,9 @@ PunchCard.prototype = {
 			.text(function (d) {
 				return d;
 			})
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('x', function (d, i) {
-				return maxR * i * 2 + maxR + options.yLabelWidth;
+				return maxR * i * 2 + maxR + o.yLabelWidth;
 			})
 			.style('fill-opacity', 1);
 
@@ -192,21 +194,21 @@ PunchCard.prototype = {
 			.text(function (d) {
 				return d.label;
 			})
-			.attr('x', options.yLabelWidth)
+			.attr('x', o.yLabelWidth)
 			.attr('class', 'yLabel')
 			.style('text-anchor', 'end')
 			.style('fill-opacity', 0);
 
 		yLabels.exit()
 			.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.style('fill-opacity', 0)
 			.remove();
 
 		yLabels.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('y', function (d, i) {
-				return maxR * i * 2 + maxR + options.xLabelHeight;
+				return maxR * i * 2 + maxR + o.xLabelHeight;
 			})
 			.attr('transform', 'translate(-6,' + maxR / 2.5 + ')')
 			.style('fill-opacity', 1);
@@ -216,7 +218,7 @@ PunchCard.prototype = {
 
 		vert.enter().append('line')
 			.attr('class', 'vert')
-			.attr('y1', options.xLabelHeight + options.borderWidth / 2)
+			.attr('y1', o.xLabelHeight + o.borderWidth / 2)
 			.attr('stroke', '#888')
 			.attr('stroke-width', 1)
 			.style('shape-rendering', 'crispEdges')
@@ -224,19 +226,19 @@ PunchCard.prototype = {
 
 		vert.exit()
 			.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.style('stroke-opacity', 0)
 			.remove();
 
 		vert.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('x1', function (d, i) {
-				return maxR * i * 2 + options.yLabelWidth;
+				return maxR * i * 2 + o.yLabelWidth;
 			})
 			.attr('x2', function (d, i) {
-				return maxR * i * 2 + options.yLabelWidth;
+				return maxR * i * 2 + o.yLabelWidth;
 			})
-			.attr('y2', maxR * 2 * data.length + options.xLabelHeight - options.borderWidth / 2)
+			.attr('y2', maxR * 2 * data.length + o.xLabelHeight - o.borderWidth / 2)
 			.style('stroke-opacity', function (d, i) {
 				return i ? 1 : 0;
 			});
@@ -247,7 +249,7 @@ PunchCard.prototype = {
 
 		horiz.enter().append('line')
 			.attr('class', 'horiz')
-			.attr('x1', options.yLabelWidth + options.borderWidth / 2)
+			.attr('x1', o.yLabelWidth + o.borderWidth / 2)
 			.attr('stroke', '#888')
 			.attr('stroke-width', 1)
 			.style('shape-rendering', 'crispEdges')
@@ -255,25 +257,25 @@ PunchCard.prototype = {
 
 		horiz.exit()
 			.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.style('stroke-opacity', 0)
 			.remove();
 
 		horiz.transition()
-			.duration(options.duration)
-			.attr('x2', maxR * 2 * labelsX.length + options.yLabelWidth - options.borderWidth / 2)
+			.duration(o.duration)
+			.attr('x2', maxR * 2 * labelsX.length + o.yLabelWidth - o.borderWidth / 2)
 			.attr('y1', function (d, i) {
-				return i * maxR * 2 + options.xLabelHeight;
+				return i * maxR * 2 + o.xLabelHeight;
 			})
 			.attr('y2', function (d, i) {
-				return i * maxR * 2 + options.xLabelHeight;
+				return i * maxR * 2 + o.xLabelHeight;
 			})
 			.style('stroke-opacity', function (d, i) {
 				return i ? 1 : 0;
 			});
 
 		this.border.transition()
-			.duration(options.duration)
+			.duration(o.duration)
 			.attr('width', maxR * 2 * labelsX.length)
 			.attr('height', maxR * 2 * data.length);
 
